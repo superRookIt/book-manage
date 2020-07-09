@@ -1,4 +1,4 @@
-package com.admin.book;
+package com.admin.book.Controller;
 
 import javax.inject.Inject;
 

@@ -1,6 +1,9 @@
 package com.admin.book.Controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.jsoup.Jsoup;
 
@@ -11,12 +14,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.admin.book.Service.BService;
 
-import lombok.Setter;
 
 @Controller
 public class Crwaling2 {
@@ -29,7 +30,7 @@ public class Crwaling2 {
 
 		// Jsoup를 이용해서 네이버 스포츠 크롤링
 
-		String url = "http://justshowup.co.kr/content/contentList.ink?brcd=&sntnAuthCode=&contentAll=Y&cttsDvsnCode=001&ctgrId=&orderByKey=publDate&selViewCnt=80&pageIndex=1&recordCount=20";
+		String url = "http://justshowup.co.kr/content/contentList.ink?brcd=&sntnAuthCode=&contentAll=Y&cttsDvsnCode=001&ctgrId=&orderByKey=publDate&selViewCnt=80&pageIndex=1&recordCount=80";
 
 		Document doc = null;
 		try {
@@ -53,8 +54,11 @@ public class Crwaling2 {
 			String alt = el.attr("alt");
 
 			System.out.println(href);
+			
 			System.out.println(alt);
-
+			
+			bservice.url_update(href, alt);
+			
 //			Elements img = el.select(".img a img"); 
 //			
 //			System.out.println("이미지 : "+img);
@@ -98,10 +102,30 @@ public class Crwaling2 {
 				String writer = test[0];
 				
 				String date = test[1];
+				
+		        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+		        
+		        Date open1 = null;
+		      
+		        try {
+		        	
+		        	open1 = format.parse(date);
+		        	
+		        } 
+		        catch (ParseException e) {
+		        	
+		            e.printStackTrace();
+		            
+		        }
+
 
 				System.out.println("저자 :  " + test[0]);
-
+				
 				System.out.println("날짜 :  " + test[1]);
+				
+				System.out.println("날짜2 :  " + open1);
+				
+				//bservice.book_insert(title, writer, company, open1, content);
 
 			}
 

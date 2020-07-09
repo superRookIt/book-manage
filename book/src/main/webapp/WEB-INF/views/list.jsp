@@ -20,12 +20,12 @@
 			<td>${blist.title}</td>
 			<td>${blist.writer}</td>
 			<td>${blist.company}</td>
+			<td><img src="${blist.url}"></td>
 		</tr>
 		
 	</c:forEach>
 
 	</table>
-
 
 
 </body>

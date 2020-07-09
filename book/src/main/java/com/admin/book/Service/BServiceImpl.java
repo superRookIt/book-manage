@@ -24,7 +24,11 @@ public class BServiceImpl implements BService {
 	public List<Book> book_list() {
 		return mapper.book_list();
 	}
-	
+
+	@Override
+	public void url_update(String url, String title) {
+		mapper.url_update(url, title);
+	}
 	
 
 }

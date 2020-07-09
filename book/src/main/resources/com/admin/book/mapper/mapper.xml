@@ -16,9 +16,16 @@
 
 	<select id="book_list" resultType="com.admin.book.Dto.Book">
 
-		select * from book
+		select * from book order by bnum
 
 	</select>
+	
+	
+	<update id="url_update" >
+
+		update book set url=#{param1} where title =#{param2}
+
+	</update>
 
 
 </mapper>       
