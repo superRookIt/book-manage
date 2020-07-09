@@ -10,6 +10,15 @@ public class Book {
 	String company;
 	Date open;
 	String content;
+	String url;
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	public int getBnum() {
 		return bnum;

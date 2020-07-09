@@ -1,13 +1,14 @@
-package com.admin.book.Dao;
+package com.admin.book.mapper;
 
 import java.util.Date;
+import java.util.List;
 
 import com.admin.book.Dto.Book;
 
-public interface BDao {
+public interface mapper {
 	
 	public void book_insert(String title, String writer, String company, Date open, String content);
 	
-	public Book book_list();
+	public List<Book> book_list();
 	
 }
