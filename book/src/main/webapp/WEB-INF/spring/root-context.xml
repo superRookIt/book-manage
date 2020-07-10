@@ -41,6 +41,7 @@
       <!-- base-package 에 정의된 package 내 클래스 및 xml을 SQL 처리를 위한 mapper로 인식-->
     <mybatis-spring:scan base-package="com.admin.book.mapper" />
 
+
     <!-- base-package에 정의된 package내 소스 중 @Component가 작성된 Class를 bean으로 인식-->
 	<context:component-scan base-package="com.admin.book.Service" />
 	

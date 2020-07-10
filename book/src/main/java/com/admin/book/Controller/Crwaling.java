@@ -1,110 +1,137 @@
 package com.admin.book.Controller;
 
-import java.io.BufferedReader;
-
 import java.io.IOException;
-
-import java.io.InputStreamReader;
-
-import java.nio.charset.Charset;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
-
-import org.apache.http.HttpEntity;
-
-import org.apache.http.HttpResponse;
-
-import org.apache.http.client.ClientProtocolException;
-
-import org.apache.http.client.HttpClient;
-
-import org.apache.http.client.methods.HttpPost;
-
-import org.apache.http.entity.ContentType;
-
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import org.jsoup.Jsoup;
 
 import org.jsoup.nodes.Document;
 
+import org.jsoup.nodes.Element;
+
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.admin.book.Service.BService;
+
+
+@Controller
 public class Crwaling {
 
-	public static String getCurrentData() {
+	@Autowired
+	BService bservice;
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+	@RequestMapping("/crwaling")
+	public void crwaling() {
 
-		return sdf.format(new Date());
+		// Jsoup를 이용해서 네이버 스포츠 크롤링
 
-	}
+		String url = "http://justshowup.co.kr/content/contentList.ink?brcd=&sntnAuthCode=&contentAll=Y&cttsDvsnCode=001&ctgrId=&orderByKey=publDate&selViewCnt=80&pageIndex=1&recordCount=80";
 
-	public static void main(String[] args) throws ClientProtocolException, IOException {
+		Document doc = null;
+		try {
 
-		// 1. 가져오기전 시간 찍기
+			doc = Jsoup.connect(url).get();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		System.out.println(" Start Date : " + getCurrentData());
+		// 주요 뉴스로 나오는 태그를 찾아서 가져오도록 한다.
 
-		// 2. 가져올 HTTP 주소 세팅
+		Elements element = doc.select(".book_resultList li");
 
-		HttpPost http = new HttpPost(
-				"http://justshowup.co.kr/content/contentList.ink?brcd=&sntnAuthCode=&contentAll=Y&cttsDvsnCode=001&ctgrId=&orderByKey=publDate&selViewCnt=80&pageIndex=1&recordCount=20");
+		Elements element2 = doc.select(".img a img");
 
-		// 3. 가져오기를 실행할 클라이언트 객체 생성
+		for (Element el : element2) {
 
-		HttpClient httpClient = HttpClientBuilder.create().build();
+			// String href = el.attr("abs:src");
+			String href = el.attr("src");
 
-		// 4. 실행 및 실행 데이터를 Response 객체에 담음
+			String alt = el.attr("alt");
 
-		HttpResponse response = httpClient.execute(http);
-
-		// 5. Response 받은 데이터 중, DOM 데이터를 가져와 Entity에 담음
-
-		HttpEntity entity = response.getEntity();
-
-		// 6. Charset을 알아내기 위해 DOM의 컨텐트 타입을 가져와 담고 Charset을 가져옴
-
-		ContentType contentType = ContentType.getOrDefault(entity);
-
-		Charset charset = contentType.getCharset();
-
-		// 7. DOM 데이터를 한 줄씩 읽기 위해 Reader에 담음 (InputStream / Buffered 중 선택은 개인취향)
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent(), charset));
-
-		// 8. 가져온 DOM 데이터를 담기위한 그릇
-
-		StringBuffer sb = new StringBuffer();
-
-		// 9. DOM 데이터 가져오기
-
-		String line = "";
-
-		while ((line = br.readLine()) != null) {
-
-			sb.append(line + "\n");
+			System.out.println(href);
+			
+			System.out.println(alt);
+			
+			bservice.url_update(href, alt);
+			
+//			Elements img = el.select(".img a img"); 
+//			
+//			System.out.println("이미지 : "+img);
 
 		}
 
-		// 10. 가져온 아름다운 DOM을 보자
+		// 1. 헤더 부분의 제목을 가져온다.
 
-		System.out.println(sb.toString());
+		// String title = element.select("h2").text();
 
-		// 11. Jsoup으로 파싱해보자.
+		System.out.println("============================================================");
 
-		Document doc = Jsoup.parse(sb.toString());
-//
-//		// 참고 - Jsoup에서 제공하는 Connect 처리
-//
-//		Document doc2 = Jsoup.connect("http://finance.naver.com/item/coinfo.nhn?code=045510&target=finsum_more").get();
-//
-////		    System.out.println(doc2.data());
+		// System.out.println(title);
 
-		// 12. 얼마나 걸렸나 찍어보자
+		System.out.println("============================================================");
 
-		System.out.println(" End Date : " + getCurrentData());
+		for (Element el : element) {
 
+			String title = el.select("li .tit").text();
+
+			String company = el.select("li .writer span").text();
+
+			String content = el.select("li .txt").text();
+
+			if (title.isEmpty() || company.isEmpty() || content.isEmpty()) {
+
+			} else {
+
+				System.out.println("제목 : " + title); // 제목
+
+				System.out.println("출판사 : " + company); // 출판사
+
+				System.out.println("내용 : " + content); // 상세설명
+
+				String total = el.select("li .writer").text();
+
+				String open = el.select("li .writer span").text();
+
+				String[] test = total.split(open);
+
+				String writer = test[0];
+				
+				String date = test[1];
+				
+		        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+		        
+		        Date open1 = null;
+		      
+		        try {
+		        	
+		        	open1 = format.parse(date);
+		        	
+		        } 
+		        catch (ParseException e) {
+		        	
+		            e.printStackTrace();
+		            
+		        }
+
+
+				System.out.println("저자 :  " + test[0]);
+				
+				System.out.println("날짜 :  " + test[1]);
+				
+				System.out.println("날짜2 :  " + open1);
+				
+				//bservice.book_insert(title, writer, company, open1, content);
+
+			}
+
+		} // else
+
+		System.out.println("============================================================");
 	}
 
 }
