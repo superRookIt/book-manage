@@ -34,6 +34,7 @@
     <!-- DB connection 및 SQL전달/리턴을 위한 SQLSession을 만들어내는 SQLSessionFactory bean 셋팅-->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"></property>
+       <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
     </bean>
 
 
